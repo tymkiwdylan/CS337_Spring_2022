@@ -20,10 +20,10 @@ def FCFS_scheduler(processes, ready, CPU, time, quantum, verbose=True):
     start_time = time
 
     # while process is not finished
-    while not (process.get_burst_time() == 0):
+    while process.duty[0] != 0:
 
         # decrement process burst time by one
-        process.burst_time -= 1
+        process.duty[0] -= 1
 
         # add 1 to time
         time += 1
@@ -56,7 +56,7 @@ def FCFS_scheduler(processes, ready, CPU, time, quantum, verbose=True):
 
 
 # Priority Scheduler
-def priority_scheduler(processes, ready, CPU, time, verbose=True):
+def priority_scheduler(processes, ready, CPU, time, quantum, verbose=True):
     # pick process with lowest burst time and remove it from ready
     process = ready.pop(find_max_priority(ready))
 
@@ -64,10 +64,10 @@ def priority_scheduler(processes, ready, CPU, time, verbose=True):
     start_time = time
 
     # while process is not finished
-    while not (process.get_burst_time() == 0):
+    while process.duty[0] != 0:
 
         # decrement process burst time by one
-        process.burst_time -= 1
+        process.duty[0] -= 1
 
         # add 1 to time
         time += 1
@@ -99,7 +99,7 @@ def priority_scheduler(processes, ready, CPU, time, verbose=True):
 
 
 # Shortest Job First Scheduler
-def SJF_scheduler(processes, ready, CPU, time, verbose=True):
+def SJF_scheduler(processes, ready, CPU, time, quantum, verbose=True):
     # pick process with lowest burst time and remove it from ready
 
     process = ready.pop(find_shortest_job(ready))
@@ -108,10 +108,10 @@ def SJF_scheduler(processes, ready, CPU, time, verbose=True):
     start_time = time
 
     # while process is not finished
-    while not (process.get_burst_time() == 0):
+    while process.duty[0] != 0:
 
         # decrement process burst time by one
-        process.burst_time -= 1
+        process.duty[0] -= 1
 
         # add 1 to time
         time += 1
@@ -289,10 +289,10 @@ def PP_scheduler(
 # Helper Function for finding the shortest job
 def find_shortest_job(ready):
     process = 0
-    min = ready[0].get_burst_time()
+    min = ready[0].get_duty()[0]
     for i in range(len(ready)):
-        if ready[i].get_burst_time() < min:
-            min = ready[i].get_burst_time()
+        if ready[i].get_duty()[0] < min:
+            min = ready[i].get_duty()[0]
             process = i
     return i
 
