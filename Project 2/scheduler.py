@@ -142,27 +142,6 @@ def SJF_scheduler(processes, ready, CPU, time, verbose=True):
     return time
 
 
-# Helper Function for finding the shortest job
-def find_shortest_job(ready):
-    process = 0
-    min = ready[0].get_burst_time()
-    for i in range(len(ready)):
-        if ready[i].get_burst_time() < min:
-            process = i
-    return i
-
-
-# Helper function for finding max priority process
-def find_max_priority(ready):
-
-    max = ready[0].get_priority()
-    process = 0
-    for i in range(len(ready)):
-        if ready[i].get_priority() > max:
-            process = i
-    return process
-
-
 def round_robin(processes, ready, CPU, time, quantum=2, verbose=True):
 
     # pick process with lowest arrival time and remove it from ready
@@ -206,6 +185,7 @@ def round_robin(processes, ready, CPU, time, quantum=2, verbose=True):
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
+            Response_time=start_time - process.get_arrival_time() 
         )
     )
 
@@ -243,6 +223,7 @@ def SRT_scheduler(processes, ready, CPU, time, quantum, verbose=True):
     end_time = time
     if verbose:
         print(f"Process: {process.get_ID()}  Start: {start_time}  End:{end_time}")
+    
 
     # add processID, start, end to CPU (this will be useful later)
     CPU.append(
@@ -253,6 +234,7 @@ def SRT_scheduler(processes, ready, CPU, time, quantum, verbose=True):
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
+            Response_time=start_time - process.get_arrival_time()
         )
     )
 
@@ -267,7 +249,7 @@ def PP_scheduler(processes, ready, CPU, time, quantum, verbose=True):  # Review 
     start_time = time
 
     # while process is not finished
-    while process.duty[0] != 0:
+    while process.duty[0] != 0 and not (find_max(ready, process.get_priority())):
 
         # decrement process burst time by one
         process.duty[0] -= 1
@@ -279,9 +261,6 @@ def PP_scheduler(processes, ready, CPU, time, quantum, verbose=True):  # Review 
         add_ready(processes, ready, time)
 
         update_wait_time(ready)
-
-        if find_max(ready, process.get_priority()):  # Something is going on with priority
-            break
 
     update_arrival(process, time, ready)
 
@@ -299,10 +278,35 @@ def PP_scheduler(processes, ready, CPU, time, quantum, verbose=True):  # Review 
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
+            Response_time=start_time- process.get_arrival_time()
         )
     )
 
     return time
+
+
+# Helper Function for finding the shortest job
+def find_shortest_job(ready):
+    process = 0
+    min = ready[0].get_burst_time()
+    for i in range(len(ready)):
+        if ready[i].get_burst_time() < min:
+            min = ready[i].get_burst_time()
+            process = i
+    return i
+
+
+# Helper function for finding max priority process
+def find_max_priority(ready):
+
+    max = ready[0].get_priority()
+    process = 0
+    for i in range(len(ready)):
+        if ready[i].get_priority() > max:
+            max = ready[i].get_priority()
+            process = i
+
+    return process
 
 
 def find_SRT(ready):
@@ -310,6 +314,7 @@ def find_SRT(ready):
     min = ready[0].duty[0]
     for i in range(len(ready)):
         if ready[i].duty[0] < min:
+            min = ready[i].duty[0]
             process = i
     return i
 
@@ -339,8 +344,8 @@ def find_max(ready, max):
         for item in ready:
             if item.get_priority() > max:
                 return True
-            else:
-                return False
+            
+    return False
 
 
 def update_arrival(process, time, ready):
@@ -364,5 +369,7 @@ def is_shorter(ready, job_time):
             else:
                 return False
 
-def multilevel_feedback(processes, ready, CPU, time, quantum, verbose=True):
-    pass
+
+
+
+

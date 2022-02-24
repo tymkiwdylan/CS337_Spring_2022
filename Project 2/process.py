@@ -17,6 +17,7 @@ class Process:
         self.response_time = 0
         self.status = "running"
         self.queue = 0
+        self.isFirst = True
 
     # Setters
     def set_duty(self, duty):

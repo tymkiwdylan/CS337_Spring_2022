@@ -11,7 +11,7 @@ import numpy as np
 # This function runs the selected scheduler until the ready que is empty
 
 
-def kernel(selected_scheduler, processes, quantum, verbose=True):  # Remember to add calculation for Average TT and WT
+def kernel(selected_scheduler, processes, quantum, file_name, verbose=True):  # Remember to add calculation for Average TT and WT
     CPU = []
     ready = []
     time = 0
@@ -25,13 +25,14 @@ def kernel(selected_scheduler, processes, quantum, verbose=True):  # Remember to
 
     # save results as CSV
     df = pd.DataFrame(CPU)
-    df.to_csv(str(selected_scheduler), index=False)
+    df.to_csv(file_name, index=False)
 
     cal_data = df.to_numpy()
 
-    avg_turnaround = np.average(cal_data[:, -1])
-    avg_wait = np.average(cal_data[:, -2])
-    return avg_turnaround, avg_wait
+    avg_turnaround = np.average(cal_data[:, -2])
+    avg_wait = np.average(cal_data[:, -3])
+    avg_response = np.mean(cal_data[:-1])
+    return avg_turnaround, avg_wait, avg_response
 
 
 # I moved the testing code to Jupyter Notebook.
