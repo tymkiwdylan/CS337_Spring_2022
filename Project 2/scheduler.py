@@ -185,7 +185,7 @@ def round_robin(processes, ready, CPU, time, quantum=2, verbose=True):
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
-            Response_time=start_time - process.get_arrival_time() 
+            Response_time=start_time - process.get_arrival_time(),
         )
     )
 
@@ -214,7 +214,7 @@ def SRT_scheduler(processes, ready, CPU, time, quantum, verbose=True):
 
         update_wait_time(ready)
 
-        if (is_shorter(ready, process.get_duty()[0])):
+        if is_shorter(ready, process.get_duty()[0]):
             break
 
     update_arrival(process, time, ready)
@@ -223,7 +223,6 @@ def SRT_scheduler(processes, ready, CPU, time, quantum, verbose=True):
     end_time = time
     if verbose:
         print(f"Process: {process.get_ID()}  Start: {start_time}  End:{end_time}")
-    
 
     # add processID, start, end to CPU (this will be useful later)
     CPU.append(
@@ -234,14 +233,16 @@ def SRT_scheduler(processes, ready, CPU, time, quantum, verbose=True):
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
-            Response_time=start_time - process.get_arrival_time()
+            Response_time=start_time - process.get_arrival_time(),
         )
     )
 
     return time
 
 
-def PP_scheduler(processes, ready, CPU, time, quantum, verbose=True):  # Review this for when preemptive starts
+def PP_scheduler(
+    processes, ready, CPU, time, quantum, verbose=True
+):  # Review this for when preemptive starts
     # pick process with lowest burst time and remove it from ready
     process = ready.pop(find_max_priority(ready))
 
@@ -278,7 +279,7 @@ def PP_scheduler(processes, ready, CPU, time, quantum, verbose=True):  # Review 
             Priority=process.get_priority(),
             wait_time=process.get_wait_time(),
             Turnaround_time=(end_time - start_time) + process.get_wait_time(),
-            Response_time=start_time- process.get_arrival_time()
+            Response_time=start_time - process.get_arrival_time(),
         )
     )
 
@@ -344,7 +345,7 @@ def find_max(ready, max):
         for item in ready:
             if item.get_priority() > max:
                 return True
-            
+
     return False
 
 
@@ -368,8 +369,3 @@ def is_shorter(ready, job_time):
                 return True
             else:
                 return False
-
-
-
-
-
