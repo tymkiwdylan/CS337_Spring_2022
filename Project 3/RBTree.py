@@ -1,4 +1,6 @@
 
+
+
 class RBNode:
     def  __init__(self, Key, parent, left, right, isRed):
 
@@ -50,12 +52,40 @@ class RBTree:
         self.nil = RBNode(0)
         self.root = self.nil
         self.min_vruntime = self.root
+        self.size = 0
 
     def insert(self, value):
-        pass
+        z = RBNode(value)
+        y = self.nil
+        x = self.root
+        while x != self.nil:
+            y = x 
+            if z.Key < x.Key:
+                x = x.left
+            else:
+                x = x.right
+        
+        z.set_parent(y)
+        
+        if y == self.nil:
+            self.root = z
+        else:
+            if z.Key < y.Key:
+                y.left = z
+            else:
+                y.right = z
+        
+        z.left = self.nil
+        z.right = self.nil
+        z.isRed = True
+        self.size += 1
+        self.fix_insert(z)
+
 
     def fix_insert(self, node):
-        pass
+        while (node.get_parent().get_isRed):
+            y = node.get_parent()
+            pass
 
     def rotate_left(self, node):
         y = node.right
@@ -89,9 +119,26 @@ class RBTree:
         y.right = node
         node.parent = y
 
-    def print_tree(self):
-        pass
+    def print_tree(self, root):
+        if root != self.nil:
+
+            self.print_tree(root.left)
+            print(root.val),
+            self.print_tree(root.right)
 
     def remove_min_vruntime(self):
+        self.size -= 1
         pass
-    
+
+    def size(self):
+        return self.size
+
+
+    def update_vruntime(self, root):
+        root.Key.set_vruntime(root.Key.get_duty()[0]*root.Key.get_priority())
+        
+        if root != self.nil:
+            self.update_vruntime(root.left)
+            self.update_vruntime(root.right)
+
+
