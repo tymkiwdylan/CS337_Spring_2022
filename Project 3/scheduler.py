@@ -286,6 +286,39 @@ def PP_scheduler(
     return time
 
 
+def completely_fair_scheduler(processes, ready, target_latency, time):
+
+    start_time = time
+
+    ready.action_in_tree(ready.root)
+
+    target_latency = 5
+    min_vruntime = ready.remove_min_vruntime()
+    dynamic_quantum = target_latency/ready.size()
+
+    if dynamic_quantum < 1:
+        dynamic_quantum == 1
+    
+    while dynamic_quantum != 0:
+        dynamic_quantum -= 1
+        min_vruntime.duty[0] -= 1
+        time += 1
+
+        for i in range(len(processes)):
+            if processes[i].get_arrival_time() == time:
+                ready.insert(processes[i])
+    
+    if min_vruntime.duty[0] != 0:
+        min_vruntime.set_arrival_time(time)
+        ready.insert(min_vruntime)
+
+    end_time = time
+
+
+    pass
+
+
+
 # Helper Function for finding the shortest job
 def find_shortest_job(ready):
     process = 0
