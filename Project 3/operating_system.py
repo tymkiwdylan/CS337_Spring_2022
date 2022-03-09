@@ -7,25 +7,23 @@ import pandas as pd
 import process
 import scheduler
 import numpy as np
+import RBTree
 
 # This function runs the selected scheduler until the ready que is empty
 
 
-def kernel(
-    selected_scheduler, processes, quantum, file_name, verbose=True
-):  # Remember to add calculation for Average TT and WT
+def kernel(selected_scheduler, processes, quantum, file_name, verbose=True):
     CPU = []
-    ready = []
+    ready = RBTree.RBTree()
     time = 0
 
     for i in range(len(processes)):
         if processes[i].get_arrival_time() == time:
-            ready.append(processes[i])
+            ready.insert(processes[i].vruntime, processes[i])
+    
 
-    while ready:
-        time = selected_scheduler(
-            processes, ready, CPU, time, quantum=quantum, verbose=verbose
-        )
+    while ready.size != 0:
+        time = selected_scheduler(processes, ready, CPU, time, verbose=verbose)
 
     # save results as CSV
     df = pd.DataFrame(CPU)

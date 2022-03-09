@@ -286,36 +286,54 @@ def PP_scheduler(
     return time
 
 
-def completely_fair_scheduler(processes, ready, target_latency, time):
+def completely_fair_scheduler(processes, ready, CPU, time, target_latency = 5, verbose = True):
 
     start_time = time
+    process = ready.remove_min_vruntime()
 
-    ready.action_in_tree(ready.root)
-
-    target_latency = 5
-    min_vruntime = ready.remove_min_vruntime()
-    dynamic_quantum = target_latency/ready.size()
-
-    if dynamic_quantum < 1:
-        dynamic_quantum == 1
+    if ready.size != 0:
+        dynamic_quantum = (int) (target_latency/ready.size)
+        if dynamic_quantum < 1:
+            dynamic_quantum = 1
+    else:
+        dynamic_quantum = 1
     
-    while dynamic_quantum != 0:
-        dynamic_quantum -= 1
-        min_vruntime.duty[0] -= 1
-        time += 1
+    time += dynamic_quantum
 
-        for i in range(len(processes)):
-            if processes[i].get_arrival_time() == time:
-                ready.insert(processes[i])
-    
-    if min_vruntime.duty[0] != 0:
-        min_vruntime.set_arrival_time(time)
-        ready.insert(min_vruntime)
+    process.duty[0] -= dynamic_quantum
+
+
+    for i in range(len(processes)):
+        if processes[i].get_arrival_time() == time:
+            ready.insert(processes[i].vruntime, processes[i])
+            print(f'process: {processes[i].get_ID()} added')
 
     end_time = time
 
+    process.set_vruntime((end_time - start_time)*process.weight)
+    
+    if process.duty[0] != 0:
+        ready.insert(process.vruntime, process)
+        print(f'process: {process.get_ID()} re added with vruntime of {process.vruntime}')
 
-    pass
+    
+
+    if verbose:
+        print(f"Process: {process.get_ID()}  Start: {start_time}  End:{end_time}")
+
+    CPU.append(
+        dict(
+            process=process.get_ID(),
+            Start=start_time,
+            Finish=end_time,
+            Priority=process.get_priority(),
+            wait_time=process.get_wait_time(),
+            Turnaround_time=(end_time - start_time) + process.get_wait_time(),
+            Response_time=start_time - process.get_arrival_time(),
+        )
+    )
+
+    return time
 
 
 
@@ -327,7 +345,7 @@ def find_shortest_job(ready):
         if ready[i].get_duty()[0] < min:
             min = ready[i].get_duty()[0]
             process = i
-    return i
+    return process
 
 
 # Helper function for finding max priority process
