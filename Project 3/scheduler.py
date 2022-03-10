@@ -1,7 +1,6 @@
 # Dylan Tymkiw
 # CS337
-# Project 2
-# 02/16/2022
+# Project 3
 
 
 from numpy import empty
@@ -286,6 +285,7 @@ def PP_scheduler(
     return time
 
 
+# Completely fair scheduler 
 def completely_fair_scheduler(processes, ready, CPU, time, target_latency = 5, verbose = True):
 
     start_time = time
